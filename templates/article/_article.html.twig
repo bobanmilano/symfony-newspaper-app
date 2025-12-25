@@ -5,6 +5,22 @@
         </a>
     </h2>
 
+    {% if article.images is not empty %}
+        {% set image = article.images|first %}
+        <div class="mb-3">
+            <a href="{{ path('article_show', {slug: article.slug}) }}">
+                <img src="{{ vich_uploader_asset(image, 'file') }}" alt="{{ image.caption|default(article.title) }}" class="img-fluid rounded object-fit-cover" style="max-height: 200px; width: 100%;">
+            </a>
+        </div>
+    {% elseif article.videos is not empty %}
+         <div class="mb-3">
+             <a href="{{ path('article_show', {slug: article.slug}) }}" class="d-block p-4 bg-light text-center text-decoration-none rounded text-muted">
+                <twig:ux:icon name="tabler:brand-youtube" style="width: 48px; height: 48px;"/>
+                <span class="d-block mt-2">Watch Video</span>
+            </a>
+        </div>
+    {% endif %}
+
     <p class="post-metadata">
         <span class="metadata"><twig:ux:icon name="tabler:calendar-month"/> {{ article.publishedAt|format_datetime('long', 'medium', '', 'UTC') }}</span>
         <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>

@@ -6,56 +6,61 @@
     <h1>{{ article.title }}</h1>
 
     <div class="article-metadata">
-        {% if article.images is not empty %}
-             <div id="articleCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    {% for image in article.images %}
-                        <div class="carousel-item {{ loop.first ? 'active' : '' }}">
-                            <img src="{{ vich_uploader_asset(image, 'file') }}" class="d-block w-100 object-fit-cover" style="max-height: 500px;" alt="{{ image.caption }}">
-                            {% if image.caption %}
-                                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
-                                    <p class="mb-0">{{ image.caption }}</p>
+        {# Hero Media Section #}
+        {% if article.images is not empty or article.videos is not empty %}
+            <div class="mb-4">
+                {% if article.images is not empty %}
+                    {# Show Image Carousel #}
+                    <div id="articleCarousel" class="carousel slide carousel-fade mb-4" data-bs-ride="carousel">
+                        <div class="carousel-inner rounded shadow-sm">
+                            {% for image in article.images %}
+                                <div class="carousel-item {{ loop.first ? 'active' : '' }}">
+                                    <img src="{{ vich_uploader_asset(image, 'file') }}" class="d-block w-100 object-fit-cover" style="max-height: 500px;" alt="{{ image.caption }}">
+                                    {% if image.caption %}
+                                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded py-2 px-3 bottom-0 mb-4 mx-auto w-auto" style="left: 50%; transform: translateX(-50%);">
+                                            <p class="mb-0 small">{{ image.caption }}</p>
+                                        </div>
+                                    {% endif %}
                                 </div>
-                            {% endif %}
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                </div>
-                {% if article.images|length > 1 %}
-                    <button class="carousel-control-prev" type="button" data-bs-target="#articleCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#articleCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                        {% if article.images|length > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#articleCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#articleCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {# Video Gallery #}
+                {% if article.videos is not empty %}
+                    <div class="row g-3">
+                        {% for video in article.videos %}
+                            <div class="{{ article.videos|length == 1 ? 'col-12' : 'col-md-6' }}">
+                                <div class="ratio ratio-16x9 rounded shadow-sm overflow-hidden">
+                                    <iframe src="{{ video.url|replace({'watch?v=': 'embed/'}) }}" title="{{ video.caption }}" allowfullscreen></iframe>
+                                </div>
+                                {% if video.caption %}
+                                    <p class="text-muted small text-center mt-2">{{ video.caption }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             </div>
         {% endif %}
 
-        <p class="article-metadata">
-            <span class="metadata"><twig:ux:icon name="tabler:calendar-time"/> {{ article.publishedAt|format_datetime('medium', 'medium') }}</span>
-            <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>
+        <p class="article-metadata border-top pt-3 mt-3">
+            <span class="metadata me-3"><twig:ux:icon name="tabler:calendar-time"/> {{ article.publishedAt|format_datetime('medium', 'medium') }}</span>
+            <span class="metadata me-3"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>
             <span class="metadata"><twig:ux:icon name="tabler:folder"/> {{ article.category.name|trans }}</span>
         </p>
     </div>
-
-    {% if article.videos is not empty %}
-        <div class="row mb-4">
-            {% for video in article.videos %}
-                <div class="col-md-6 mb-3">
-                    <div class="ratio ratio-16x9">
-                        {# Naive implementation for YouTube embeds - in prod usage would use an embed service or parse ID #}
-                        {# Assuming user pastes full URL: replace watch?v= with embed/ #}
-                        <iframe src="{{ video.url|replace({'watch?v=': 'embed/'}) }}" title="{{ video.caption }}" allowfullscreen></iframe>
-                    </div>
-                     {% if video.caption %}
-                        <p class="text-muted small text-center">{{ video.caption }}</p>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
 
     {{ article.content|markdown_to_html|sanitize_html }}
 

@@ -64,8 +64,7 @@
         </div>
     </fieldset>
 
-    {# render remaining fields (CSRF token, etc.) #}
-    {{ form_rest(form) }}
+    {# form_rest moved to end #}
 
     <script>
         document.querySelectorAll('.add-item-link').forEach(btn => {
@@ -88,9 +87,15 @@
         <twig:ux:icon name="tabler:save-changes"/> {{ button_label|default('label.create_post'|trans) }}
     </button>
 
+    {% if form.saveAndCreateNew is defined %}
+        {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
+    {% endif %}
+
     {% if include_back_to_home_link|default(false) %}
         <a href="{{ path('admin_article_index') }}" class="btn btn-link">
             <twig:ux:icon name="tabler:list"/> {{ 'action.back_to_list'|trans }}
         </a>
     {% endif %}
+    {# render remaining fields (CSRF token, etc.) #}
+    {{ form_rest(form) }}
 {{ form_end(form) }}
