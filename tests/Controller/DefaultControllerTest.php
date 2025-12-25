@@ -11,7 +11,7 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Post;
+use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -53,7 +53,7 @@ final class DefaultControllerTest extends WebTestCase
      * You can also write integration tests to verify the logic of your services.
      * See https://symfony.com/doc/current/testing.html#integration-tests
      */
-    public function testPublicBlogPost(): void
+    public function testPublicArticle(): void
     {
         $client = static::createClient();
 
@@ -61,10 +61,10 @@ final class DefaultControllerTest extends WebTestCase
         /** @var Registry $registry */
         $registry = $client->getContainer()->get('doctrine');
 
-        /** @var Post $blogPost */
-        $blogPost = $registry->getRepository(Post::class)->find(1);
+        /** @var Article $article */
+        $article = $registry->getRepository(Article::class)->find(1);
 
-        $client->request('GET', \sprintf('/en/blog/posts/%s', $blogPost->getSlug()));
+        $client->request('GET', \sprintf('/en/article/%s', $article->getSlug()));
         $this->assertResponseIsSuccessful();
     }
 
@@ -89,15 +89,15 @@ final class DefaultControllerTest extends WebTestCase
     public static function getPublicUrls(): \Generator
     {
         yield ['/'];
-        yield ['/en/blog/'];
+        yield ['/en/article/'];
         yield ['/en/login'];
     }
 
     public static function getSecureUrls(): \Generator
     {
-        yield ['/en/admin/post/'];
-        yield ['/en/admin/post/new'];
-        yield ['/en/admin/post/1'];
-        yield ['/en/admin/post/1/edit'];
+        yield ['/en/admin/article/'];
+        yield ['/en/admin/article/new'];
+        yield ['/en/admin/article/1'];
+        yield ['/en/admin/article/1/edit'];
     }
 }

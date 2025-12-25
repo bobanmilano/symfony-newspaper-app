@@ -2,24 +2,24 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" target-language="en" datatype="plaintext" original="file.ext">
         <body>
-            <trans-unit id="post.slug_unique">
-                <source>post.slug_unique</source>
-                <target>This title was already used in another blog post, but they must be unique.</target>
+            <trans-unit id="article.slug_unique">
+                <source>article.slug_unique</source>
+                <target>This title was already used in another article, but they must be unique.</target>
             </trans-unit>
-            <trans-unit id="post.blank_summary">
-                <source>post.blank_summary</source>
-                <target>Give your post a summary!</target>
+            <trans-unit id="article.blank_summary">
+                <source>article.blank_summary</source>
+                <target>Give your article a summary!</target>
             </trans-unit>
-            <trans-unit id="post.blank_content">
-                <source>post.blank_content</source>
-                <target>Your post should have some content!</target>
+            <trans-unit id="article.blank_content">
+                <source>article.blank_content</source>
+                <target>Your article should have some content!</target>
             </trans-unit>
-            <trans-unit id="post.too_short_content">
-                <source>post.too_short_content</source>
-                <target>Post content is too short ({ limit } characters minimum)</target>
+            <trans-unit id="article.too_short_content">
+                <source>article.too_short_content</source>
+                <target>Article content is too short ({ limit } characters minimum)</target>
             </trans-unit>
-            <trans-unit id="post.too_many_tags">
-                <source>post.too_many_tags</source>
+            <trans-unit id="article.too_many_tags">
+                <source>article.too_many_tags</source>
                 <target>Too many tags (add { limit } tags or less)</target>
             </trans-unit>
             <trans-unit id="comment.blank">

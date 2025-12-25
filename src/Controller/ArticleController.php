@@ -78,6 +78,22 @@ final class ArticleController extends AbstractController
         ]);
     }
 
+    #[Route('/search', name: 'article_search', methods: ['GET'])]
+    public function search(Request $request, ArticleRepository $articles): Response
+    {
+        $query = (string) $request->query->get('q', '');
+        $foundArticles = [];
+
+        if ('' !== $query) {
+            $foundArticles = $articles->findBySearchQuery($query);
+        }
+
+        return $this->render('article/search.html.twig', [
+            'query' => $query,
+            'articles' => $foundArticles,
+        ]);
+    }
+
     /**
      * NOTE: when the controller argument is a Doctrine entity, Symfony makes an
      * automatic database query to fetch it based on the value of the route parameters.
@@ -154,20 +170,6 @@ final class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/search', name: 'article_search', methods: ['GET'])]
-    public function search(Request $request, ArticleRepository $articles): Response
-    {
-        $query = (string) $request->query->get('q', '');
-        $foundArticles = [];
 
-        if ('' !== $query) {
-            $foundArticles = $articles->findBySearchQuery($query);
-        }
-
-        return $this->render('article/search.html.twig', [
-            'query' => $query,
-            'articles' => $foundArticles,
-        ]);
-    }
 }
 

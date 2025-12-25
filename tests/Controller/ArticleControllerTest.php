@@ -17,7 +17,7 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Functional test for the controllers defined inside BlogController.
+ * Functional test for the controllers defined inside ArticleController.
  *
  * See https://symfony.com/doc/current/testing.html#functional-tests
  *
@@ -26,33 +26,33 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  *     $ cd your-symfony-project/
  *     $ ./vendor/bin/phpunit
  */
-final class BlogControllerTest extends WebTestCase
+final class ArticleControllerTest extends WebTestCase
 {
     public function testIndex(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/en/blog/');
+        $crawler = $client->request('GET', '/en/article/');
 
         $this->assertResponseIsSuccessful();
 
         $this->assertCount(
-            Paginator::PAGE_SIZE,
+            5,
             $crawler->filter('article.post'),
-            'The homepage displays the right number of posts.'
+            'The homepage displays the right number of articles.'
         );
     }
 
     public function testRss(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/en/blog/rss.xml');
+        $crawler = $client->request('GET', '/en/article/rss.xml');
 
         $this->assertResponseHeaderSame('Content-Type', 'text/xml; charset=UTF-8');
 
         $this->assertCount(
-            Paginator::PAGE_SIZE,
+            5,
             $crawler->filter('item'),
-            'The xml file displays the right number of posts.'
+            'The xml file displays the right number of articles.'
         );
     }
 
@@ -76,8 +76,8 @@ final class BlogControllerTest extends WebTestCase
 
         $client->followRedirects();
 
-        // Find first blog post
-        $crawler = $client->request('GET', '/en/blog/');
+        // Find first article
+        $crawler = $client->request('GET', '/en/article/');
         $postLink = $crawler->filter('article.post > h2 a')->link();
 
         $client->click($postLink);
@@ -93,7 +93,7 @@ final class BlogControllerTest extends WebTestCase
     public function testAjaxSearch(): void
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/en/blog/search', ['q' => 'lorem']);
+        $crawler = $client->request('GET', '/en/article/search', ['q' => 'lorem']);
 
         $this->assertResponseIsSuccessful();
         $this->assertCount(1, $crawler->filter('article.post'));
