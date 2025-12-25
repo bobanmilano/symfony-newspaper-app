@@ -11,7 +11,7 @@
 
 namespace App\Entity;
 
-use App\Repository\PostRepository;
+use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -20,18 +20,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Defines the properties of the Post entity to represent the blog posts.
+ * Defines the properties of the Article entity to represent newspaper articles.
  *
  * See https://symfony.com/doc/current/doctrine.html#creating-an-entity-class
- *
- * @author Ryan Weaver <weaverryan@gmail.com>
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
- * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-#[ORM\Entity(repositoryClass: PostRepository::class)]
-#[ORM\Table(name: 'symfony_demo_post')]
-#[UniqueEntity(fields: ['slug'], errorPath: 'title', message: 'post.slug_unique')]
-class Post
+#[ORM\Entity(repositoryClass: ArticleRepository::class)]
+#[ORM\Table(name: 'symfony_demo_article')]
+#[UniqueEntity(fields: ['slug'], errorPath: 'title', message: 'article.slug_unique')]
+class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -46,26 +42,39 @@ class Post
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::STRING)]
-    #[Assert\NotBlank(message: 'post.blank_summary')]
+    #[Assert\NotBlank(message: 'article.blank_summary')]
     #[Assert\Length(max: 255)]
     private ?string $summary = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $lead = null;
+
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: 'post.blank_content')]
-    #[Assert\Length(min: 10, minMessage: 'post.too_short_content')]
+    #[Assert\NotBlank(message: 'article.blank_content')]
+    #[Assert\Length(min: 10, minMessage: 'article.too_short_content')]
     private ?string $content = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $publishedAt;
 
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private int $priority = 0;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $isTopStory = false;
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'articles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
+
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'post', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist'])]
     #[ORM\OrderBy(['publishedAt' => 'DESC'])]
     private Collection $comments;
 
@@ -73,9 +82,9 @@ class Post
      * @var Collection<int, Tag>
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, cascade: ['persist'])]
-    #[ORM\JoinTable(name: 'symfony_demo_post_tag')]
+    #[ORM\JoinTable(name: 'symfony_demo_article_tag')]
     #[ORM\OrderBy(['name' => 'ASC'])]
-    #[Assert\Count(max: 4, maxMessage: 'post.too_many_tags')]
+    #[Assert\Count(max: 4, maxMessage: 'article.too_many_tags')]
     private Collection $tags;
 
     public function __construct()
@@ -150,7 +159,7 @@ class Post
 
     public function addComment(Comment $comment): void
     {
-        $comment->setPost($this);
+        $comment->setArticle($this);
 
         if (!$this->comments->contains($comment)) {
             $this->comments->add($comment);
@@ -170,6 +179,46 @@ class Post
     public function setSummary(?string $summary): void
     {
         $this->summary = $summary;
+    }
+
+    public function getLead(): ?string
+    {
+        return $this->lead;
+    }
+
+    public function setLead(?string $lead): void
+    {
+        $this->lead = $lead;
+    }
+
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
+    }
+
+    public function isTopStory(): bool
+    {
+        return $this->isTopStory;
+    }
+
+    public function setIsTopStory(bool $isTopStory): void
+    {
+        $this->isTopStory = $isTopStory;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): void
+    {
+        $this->category = $category;
     }
 
     public function addTag(Tag ...$tags): void
@@ -194,3 +243,4 @@ class Post
         return $this->tags;
     }
 }
+

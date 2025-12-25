@@ -14,12 +14,12 @@
 
 {% block header_navigation_links %}
     <li class="nav-item">
-        <a class="nav-link {{ _route in ['admin_index', 'admin_post_index'] ? 'active' }}" href="{{ path('admin_post_index') }}">
+        <a class="nav-link {{ _route in ['admin_index', 'admin_article_index'] ? 'active' }}" href="{{ path('admin_article_index') }}">
             <twig:ux:icon name="tabler:list"/> {{ 'menu.post_list'|trans }}
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{ path('blog_index') }}">
+        <a class="nav-link" href="{{ path('article_index') }}">
             <twig:ux:icon name="tabler:home"/> {{ 'menu.back_to_blog'|trans }}
         </a>
     </li>

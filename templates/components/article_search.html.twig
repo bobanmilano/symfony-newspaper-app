@@ -14,8 +14,8 @@
         >
     </div>
 
-    {% for post in this.posts %}
-        {{ include('blog/_post.html.twig') }}
+    {% for article in this.articles %}
+        {{ include('article/_article.html.twig') }}
     {% else %}
         {% if query is not empty %}
             {{ 'post.search_no_results'|trans }}

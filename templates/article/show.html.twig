@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block body_id 'blog_post_show' %}
+{% block body_id 'article_show' %}
 
 {% block main %}
-    <h1>{{ post.title }}</h1>
+    <h1>{{ article.title }}</h1>
 
     <p class="post-metadata">
-        <span class="metadata"><twig:ux:icon name="tabler:calendar-month"/> {{ post.publishedAt|format_datetime('long', 'medium', '', 'UTC') }}</span>
-        <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ post.author.fullName }}</span>
+        <span class="metadata"><twig:ux:icon name="tabler:calendar-month"/> {{ article.publishedAt|format_datetime('long', 'medium', '', 'UTC') }}</span>
+        <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>
     </p>
 
-    {{ post.content|markdown_to_html|sanitize_html }}
+    {{ article.content|markdown_to_html|sanitize_html }}
 
-    {{ include('blog/_post_tags.html.twig') }}
+    {{ include('article/_article_tags.html.twig') }}
 
     <div id="post-add-comment" class="well">
         {#
@@ -27,7 +27,7 @@
                 When the name of the Twig argument is the same as the name of the variable, you can omit it.
                 e.g. instead of controller('...', {post: post}) you can use controller('...', {post})
             #}
-            {{ render(controller('App\\Controller\\BlogController::commentForm', {post})) }}
+            {{ render(controller('App\\Controller\\ArticleController::commentForm', {article})) }}
         {% else %}
             <p>
                 <a class="btn btn-success" href="{{ path('security_login', {redirect_to: app.request.pathInfo}) }}">
@@ -39,10 +39,10 @@
     </div>
 
     <h3>
-        <twig:ux:icon name="tabler:messages"/> {{ 'post.num_comments'|trans({count: post.comments|length}) }}
+        <twig:ux:icon name="tabler:messages"/> {{ 'post.num_comments'|trans({count: article.comments|length}) }}
     </h3>
 
-    {% for comment in post.comments %}
+    {% for comment in article.comments %}
         <div class="row post-comment">
             <a name="comment_{{ comment.id }}"></a>
             <h4 class="col-sm-3">
@@ -66,9 +66,9 @@
 {% endblock %}
 
 {% block sidebar %}
-    {% if is_granted('edit', post) %}
+    {% if is_granted('edit', article) %}
         <div class="section">
-            <a class="btn btn-lg btn-block btn-success" href="{{ path('admin_post_edit', {id: post.id}) }}">
+            <a class="btn btn-lg btn-block btn-success" href="{{ path('admin_article_edit', {id: article.id}) }}">
                 <twig:ux:icon name="tabler:pencil"/> {{ 'action.edit_post'|trans }}
             </a>
         </div>
@@ -82,5 +82,5 @@
     {{ parent() }}
 
     {{ show_source_code(_self) }}
-    {{ include('blog/_rss.html.twig') }}
+    {{ include('article/_rss.html.twig') }}
 {% endblock %}

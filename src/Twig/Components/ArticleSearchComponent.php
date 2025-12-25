@@ -11,21 +11,21 @@
 
 namespace App\Twig\Components;
 
-use App\Entity\Post;
-use App\Repository\PostRepository;
+use App\Entity\Article;
+use App\Repository\ArticleRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 /**
- * Live component to display instant search for Posts.
+ * Live component to display instant search for Articles.
  *
  * See https://symfony.com/bundles/ux-live-component/current/index.html
  *
  * @author Romain Monteil <monteil.romain@gmail.com>
  */
-#[AsLiveComponent(name: 'blog_search')]
-final class BlogSearchComponent
+#[AsLiveComponent(name: 'article_search')]
+final class ArticleSearchComponent
 {
     use DefaultActionTrait;
 
@@ -42,15 +42,16 @@ final class BlogSearchComponent
     public string $query = '';
 
     public function __construct(
-        private readonly PostRepository $postRepository,
+        private readonly ArticleRepository $articleRepository,
     ) {
     }
 
     /**
-     * @return array<Post>
+     * @return array<Article>
      */
-    public function getPosts(): array
+    public function getArticles(): array
     {
-        return $this->postRepository->findBySearchQuery($this->query);
+        return $this->articleRepository->findBySearchQuery($this->query);
     }
 }
+

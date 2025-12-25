@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use function Symfony\Component\String\u;
 
 /**
- * Defines the properties of the Comment entity to represent the blog comments.
+ * Defines the properties of the Comment entity to represent article comments.
  *
  * See https://symfony.com/doc/current/doctrine.html#creating-an-entity-class
  *
@@ -34,9 +34,9 @@ class Comment
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Post::class, inversedBy: 'comments')]
+    #[ORM\ManyToOne(targetEntity: Article::class, inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Post $post = null;
+    private ?Article $article = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: 'comment.blank')]
@@ -98,13 +98,13 @@ class Comment
         $this->author = $author;
     }
 
-    public function getPost(): ?Post
+    public function getArticle(): ?Article
     {
-        return $this->post;
+        return $this->article;
     }
 
-    public function setPost(Post $post): void
+    public function setArticle(Article $article): void
     {
-        $this->post = $post;
+        $this->article = $article;
     }
 }

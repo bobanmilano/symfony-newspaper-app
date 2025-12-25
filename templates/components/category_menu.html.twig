@@ -1,0 +1,15 @@
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <twig:ux:icon name="tabler:news"/> {{ 'Article'|trans }}
+    </a>
+    <ul class="dropdown-menu">
+
+        {% for category in this.categories %}
+            <li>
+                <a class="dropdown-item {{ app.request.query.get('category') == category.slug ? 'active' }}" href="{{ path('article_index', {category: category.slug}) }}">
+                   {{ category.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</li>

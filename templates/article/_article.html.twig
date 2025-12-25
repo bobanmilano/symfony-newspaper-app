@@ -1,0 +1,16 @@
+<article class="post">
+    <h2>
+        <a href="{{ path('article_show', {slug: article.slug}) }}">
+            {{ article.title }}
+        </a>
+    </h2>
+
+    <p class="post-metadata">
+        <span class="metadata"><twig:ux:icon name="tabler:calendar-month"/> {{ article.publishedAt|format_datetime('long', 'medium', '', 'UTC') }}</span>
+        <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>
+    </p>
+
+    <p>{{ article.summary }}</p>
+
+    {{ include('article/_article_tags.html.twig') }}
+</article>

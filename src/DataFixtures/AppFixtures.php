@@ -11,8 +11,9 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Article;
+use App\Entity\Category;
 use App\Entity\Comment;
-use App\Entity\Post;
 use App\Entity\Tag;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -34,8 +35,9 @@ final class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $this->loadUsers($manager);
+        $this->loadCategories($manager);
         $this->loadTags($manager);
-        $this->loadPosts($manager);
+        $this->loadArticles($manager);
     }
 
     private function loadUsers(ObjectManager $manager): void
@@ -56,6 +58,23 @@ final class AppFixtures extends Fixture
         $manager->flush();
     }
 
+    private function loadCategories(ObjectManager $manager): void
+    {
+        foreach ($this->getCategoryData() as [$name, $slug, $description, $color]) {
+            $category = new Category();
+            $category->setName($name);
+            $category->setSlug($slug);
+            $category->setDescription($description);
+            $category->setColor($color);
+
+            $manager->persist($category);
+
+            $this->addReference('category-'.$slug, $category);
+        }
+
+        $manager->flush();
+    }
+
     private function loadTags(ObjectManager $manager): void
     {
         foreach ($this->getTagData() as $name) {
@@ -69,17 +88,21 @@ final class AppFixtures extends Fixture
         $manager->flush();
     }
 
-    private function loadPosts(ObjectManager $manager): void
+    private function loadArticles(ObjectManager $manager): void
     {
-        foreach ($this->getPostData() as [$title, $slug, $summary, $content, $publishedAt, $author, $tags]) {
-            $post = new Post();
-            $post->setTitle($title);
-            $post->setSlug($slug);
-            $post->setSummary($summary);
-            $post->setContent($content);
-            $post->setPublishedAt($publishedAt);
-            $post->setAuthor($author);
-            $post->addTag(...$tags);
+        foreach ($this->getArticleData() as [$title, $slug, $summary, $lead, $content, $publishedAt, $author, $category, $tags, $priority, $isTopStory]) {
+            $article = new Article();
+            $article->setTitle($title);
+            $article->setSlug($slug);
+            $article->setSummary($summary);
+            $article->setLead($lead);
+            $article->setContent($content);
+            $article->setPublishedAt($publishedAt);
+            $article->setAuthor($author);
+            $article->setCategory($category);
+            $article->setPriority($priority);
+            $article->setIsTopStory($isTopStory);
+            $article->addTag(...$tags);
 
             foreach (range(1, 5) as $i) {
                 $comment = new Comment();
@@ -87,10 +110,10 @@ final class AppFixtures extends Fixture
                 $comment->setContent($this->getRandomText(random_int(255, 512)));
                 $comment->setPublishedAt(new \DateTimeImmutable('now + '.$i.'seconds'));
 
-                $post->addComment($comment);
+                $article->addComment($comment);
             }
 
-            $manager->persist($post);
+            $manager->persist($article);
         }
 
         $manager->flush();
@@ -128,29 +151,51 @@ final class AppFixtures extends Fixture
     }
 
     /**
-     * @return array<int, array{0: string, 1: AbstractUnicodeString, 2: string, 3: string, 4: \DateTimeImmutable, 5: User, 6: array<Tag>}>
+     * @return array<array{string, string, string|null, string|null}>
+     */
+    private function getCategoryData(): array
+    {
+        return [
+            // [$name, $slug, $description, $color]
+            ['International', 'international', 'Internationale Nachrichten und Ereignisse', '#1f77b4'],
+            ['Inland', 'inland', 'Nachrichten aus dem Inland', '#ff7f0e'],
+            ['Wirtschaft', 'wirtschaft', 'Wirtschafts- und Finanznachrichten', '#2ca02c'],
+            ['Web', 'web', 'Internet, Technologie und Digitales', '#d62728'],
+            ['Sport', 'sport', 'Sportnachrichten und Ergebnisse', '#9467bd'],
+            ['Kultur', 'kultur', 'Kultur, Kunst und Unterhaltung', '#8c564b'],
+            ['Wissenschaft', 'wissenschaft', 'Wissenschaft und Forschung', '#e377c2'],
+        ];
+    }
+
+    /**
+     * @return array<int, array{0: string, 1: AbstractUnicodeString, 2: string, 3: string|null, 4: string, 5: \DateTimeImmutable, 6: User, 7: Category, 8: array<Tag>, 9: int, 10: bool}>
      *
      * @throws \Exception
      */
-    private function getPostData(): array
+    private function getArticleData(): array
     {
-        $posts = [];
+        $articles = [];
+        $categorySlugs = ['international', 'inland', 'wirtschaft', 'web', 'sport', 'kultur', 'wissenschaft'];
 
         foreach ($this->getPhrases() as $i => $title) {
-            // $postData = [$title, $slug, $summary, $content, $publishedAt, $author, $tags, $comments];
-            $posts[] = [
+            // $articleData = [$title, $slug, $summary, $lead, $content, $publishedAt, $author, $category, $tags, $priority, $isTopStory];
+            $articles[] = [
                 $title,
                 $this->slugger->slug($title)->lower(),
                 $this->getRandomText(),
-                $this->getPostContent(),
+                $i < 3 ? $this->getRandomText(150) : null, // First 3 articles have a lead
+                $this->getArticleContent(),
                 (new \DateTimeImmutable('now - '.$i.'days'))->setTime(random_int(8, 17), random_int(7, 49), random_int(0, 59)),
-                // Ensure that the first post is written by Jane Doe to simplify tests
+                // Ensure that the first article is written by Jane Doe to simplify tests
                 $this->getReference(['jane_admin', 'tom_admin'][0 === $i ? 0 : random_int(0, 1)], User::class),
+                $this->getReference('category-'.$categorySlugs[$i % \count($categorySlugs)], Category::class),
                 $this->getRandomTags(),
+                $i < 5 ? random_int(50, 100) : random_int(0, 50), // First 5 articles have higher priority
+                $i < 2, // First 2 articles are top stories
             ];
         }
 
-        return $posts;
+        return $articles;
     }
 
     /**
@@ -205,7 +250,7 @@ final class AppFixtures extends Fixture
         return $text;
     }
 
-    private function getPostContent(): string
+    private function getArticleContent(): string
     {
         return <<<'MARKDOWN'
             Lorem ipsum dolor sit amet consectetur adipisicing elit, sed do eiusmod tempor

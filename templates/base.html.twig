@@ -10,7 +10,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="view-transition" content="same-origin">
         <title>{% block title %}Symfony Demo application{% endblock %}</title>
-        <link rel="alternate" type="application/rss+xml" title="{{ 'rss.title'|trans }}" href="{{ path('blog_rss') }}">
+        <link rel="alternate" type="application/rss+xml" title="{{ 'rss.title'|trans }}" href="{{ path('article_rss') }}">
         <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
 
         {#
@@ -39,14 +39,10 @@
                         <div class="collapse navbar-collapse" id="appNavbar">
                             <ul class="navbar-nav">
                                 {% block header_navigation_links %}
-                                    <li class="nav-item">
-                                        <a class="nav-link {{ _route == 'blog_index' ? 'active' }}" href="{{ path('blog_index') }}">
-                                            <twig:ux:icon name="tabler:home"/> {{ 'menu.homepage'|trans }}
-                                        </a>
-                                    </li>
+                                    {{ component('category_menu') }}
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ path('admin_post_index') }}">
+                                            <a class="nav-link" href="{{ path('admin_article_index') }}">
                                                 <twig:ux:icon name="tabler:lock"/> {{ 'menu.admin'|trans }}
                                             </a>
                                         </li>
@@ -54,7 +50,7 @@
                                 {% endblock %}
 
                                 <li class="nav-item">
-                                    <a class="nav-link {{ _route == 'blog_search' ? 'active' }}" href="{{ path('blog_search') }}">
+                                    <a class="nav-link {{ _route == 'article_search' ? 'active' }}" href="{{ path('article_search') }}">
                                         <twig:ux:icon name="tabler:search"/> {{ 'menu.search'|trans }}
                                     </a>
                                 </li>
@@ -99,7 +95,7 @@
                     <div id="sidebar" class="col-sm-3">
                         {% block sidebar %}
                             {{ render_esi(controller('Symfony\\Bundle\\FrameworkBundle\\Controller\\TemplateController::templateAction', {
-                                template: 'blog/about.html.twig',
+                                template: 'article/about.html.twig',
                                 sharedAge: 600,
                                 _locale: app.locale,
                             })) }}

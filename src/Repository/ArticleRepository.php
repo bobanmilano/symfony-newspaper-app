@@ -11,7 +11,8 @@
 
 namespace App\Repository;
 
-use App\Entity\Post;
+use App\Entity\Article;
+use App\Entity\Category;
 use App\Entity\Tag;
 use App\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -21,46 +22,49 @@ use function Symfony\Component\String\u;
 
 /**
  * This custom Doctrine repository contains some methods which are useful when
- * querying for blog post information.
+ * querying for article information.
  *
  * See https://symfony.com/doc/current/doctrine.html#querying-for-objects-the-repository
  *
- * @author Ryan Weaver <weaverryan@gmail.com>
- * @author Javier Eguiluz <javier.eguiluz@gmail.com>
- * @author Yonel Ceruto <yonelceruto@gmail.com>
+ * @method Article|null findOneByTitle(string $articleTitle)
  *
- * @method Post|null findOneByTitle(string $postTitle)
- *
- * @template-extends ServiceEntityRepository<Post>
+ * @template-extends ServiceEntityRepository<Article>
  */
-class PostRepository extends ServiceEntityRepository
+class ArticleRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Post::class);
+        parent::__construct($registry, Article::class);
     }
 
-    public function findLatest(int $page = 1, ?Tag $tag = null): Paginator
+    public function findLatest(int $page = 1, ?Tag $tag = null, ?Category $category = null): Paginator
     {
-        $qb = $this->createQueryBuilder('p')
-            ->addSelect('a', 't')
-            ->innerJoin('p.author', 'a')
-            ->leftJoin('p.tags', 't')
-            ->where('p.publishedAt <= :now')
-            ->orderBy('p.publishedAt', 'DESC')
+        $qb = $this->createQueryBuilder('a')
+            ->addSelect('u', 't', 'c')
+            ->innerJoin('a.author', 'u')
+            ->leftJoin('a.tags', 't')
+            ->leftJoin('a.category', 'c')
+            ->where('a.publishedAt <= :now')
+            ->orderBy('a.priority', 'DESC')
+            ->addOrderBy('a.publishedAt', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
         ;
 
         if (null !== $tag) {
-            $qb->andWhere(':tag MEMBER OF p.tags')
+            $qb->andWhere(':tag MEMBER OF a.tags')
                 ->setParameter('tag', $tag);
+        }
+
+        if (null !== $category) {
+            $qb->andWhere('a.category = :category')
+                ->setParameter('category', $category);
         }
 
         return (new Paginator($qb))->paginate($page);
     }
 
     /**
-     * @return Post[]
+     * @return Article[]
      */
     public function findBySearchQuery(string $query, int $limit = Paginator::PAGE_SIZE): array
     {
@@ -70,24 +74,43 @@ class PostRepository extends ServiceEntityRepository
             return [];
         }
 
-        $queryBuilder = $this->createQueryBuilder('p');
+        $queryBuilder = $this->createQueryBuilder('a');
 
         foreach ($searchTerms as $key => $term) {
             $queryBuilder
-                ->orWhere('p.title LIKE :t_'.$key)
+                ->orWhere('a.title LIKE :t_'.$key)
                 ->setParameter('t_'.$key, '%'.$term.'%')
             ;
         }
 
-        /** @var Post[] $result */
+        /** @var Article[] $result */
         $result = $queryBuilder
-            ->orderBy('p.publishedAt', 'DESC')
+            ->orderBy('a.priority', 'DESC')
+            ->addOrderBy('a.publishedAt', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult()
         ;
 
         return $result;
+    }
+
+    /**
+     * @return Article[]
+     */
+    public function findTopStories(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.isTopStory = :topStory')
+            ->andWhere('a.publishedAt <= :now')
+            ->setParameter('topStory', true)
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('a.priority', 'DESC')
+            ->addOrderBy('a.publishedAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     /**
@@ -105,3 +128,4 @@ class PostRepository extends ServiceEntityRepository
         });
     }
 }
+

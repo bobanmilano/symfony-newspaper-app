@@ -1,6 +1,6 @@
 {% extends 'admin/layout.html.twig' %}
 
-{% block body_id 'admin_post_index' %}
+{% block body_id 'admin_article_index' %}
 
 {% block main %}
     <h1>{{ 'title.post_list'|trans }}</h1>
@@ -14,22 +14,22 @@
             </tr>
         </thead>
         <tbody>
-        {% for post in posts %}
+        {% for article in articles %}
             <tr>
-                <td>{{ post.title }}</td>
+                <td>{{ article.title }}</td>
                 {#
                     It's not mandatory to set the timezone in format_datetime(). This is done to
                     avoid errors when the 'intl' PHP extension is not available and the application
                     is forced to use the limited "intl polyfill", which only supports UTC and GMT
                 #}
-                <td>{{ post.publishedAt|format_datetime('medium', 'short', '', 'UTC') }}</td>
+                <td>{{ article.publishedAt|format_datetime('medium', 'short', '', 'UTC') }}</td>
                 <td class="text-right">
                     <div class="item-actions">
-                        <a href="{{ path('admin_post_show', {id: post.id}) }}" class="btn btn-sm btn-secondary">
+                        <a href="{{ path('admin_article_show', {id: article.id}) }}" class="btn btn-sm btn-secondary">
                             <twig:ux:icon name="tabler:eye"/> {{ 'action.show'|trans }}
                         </a>
 
-                        <a href="{{ path('admin_post_edit', {id: post.id}) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ path('admin_article_edit', {id: article.id}) }}" class="btn btn-sm btn-primary">
                             <twig:ux:icon name="tabler:pencil"/> {{ 'action.edit'|trans }}
                         </a>
                     </div>
@@ -46,7 +46,7 @@
 
 {% block sidebar %}
     <div class="section actions">
-        <a href="{{ path('admin_post_new') }}" class="btn btn-lg btn-block btn-success">
+        <a href="{{ path('admin_article_new') }}" class="btn btn-lg btn-block btn-success">
             <twig:ux:icon name="tabler:pencil"/> {{ 'action.create_post'|trans }}
         </a>
     </div>

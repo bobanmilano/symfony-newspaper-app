@@ -11,10 +11,14 @@
 
 namespace App\Form;
 
-use App\Entity\Post;
+use App\Entity\Article;
 use App\Form\Type\DateTimePickerType;
 use App\Form\Type\TagsInputType;
+use App\Repository\CategoryRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -23,17 +27,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 /**
- * Defines the form used to create and manipulate blog posts.
+ * Defines the form used to create and manipulate articles.
  *
  * @author Ryan Weaver <weaverryan@gmail.com>
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
  * @author Yonel Ceruto <yonelceruto@gmail.com>
  */
-final class PostType extends AbstractType
+final class ArticleType extends AbstractType
 {
     // Form types are services, so you can inject other services in them if needed
     public function __construct(
         private readonly SluggerInterface $slugger,
+        private readonly CategoryRepository $categoryRepository,
     ) {
     }
 
@@ -54,17 +59,42 @@ final class PostType extends AbstractType
                 'label' => 'label.title',
             ])
             ->add('summary', TextareaType::class, [
-                'help' => 'help.post_summary',
+                'help' => 'help.article_summary',
                 'label' => 'label.summary',
+            ])
+            ->add('lead', TextareaType::class, [
+                'required' => false,
+                'help' => 'help.article_lead',
+                'label' => 'label.lead',
+                'attr' => ['rows' => 3],
             ])
             ->add('content', null, [
                 'attr' => ['rows' => 20],
-                'help' => 'help.post_content',
+                'help' => 'help.article_content',
                 'label' => 'label.content',
+            ])
+            ->add('category', EntityType::class, [
+                'class' => 'App\Entity\Category',
+                'choice_label' => 'name',
+                'query_builder' => fn () => $this->categoryRepository->createQueryBuilder('c')
+                    ->orderBy('c.name', 'ASC'),
+                'label' => 'label.category',
+                'required' => true,
             ])
             ->add('publishedAt', DateTimePickerType::class, [
                 'label' => 'label.published_at',
-                'help' => 'help.post_publication',
+                'help' => 'help.article_publication',
+            ])
+            ->add('priority', IntegerType::class, [
+                'required' => false,
+                'label' => 'label.priority',
+                'help' => 'help.article_priority',
+                'attr' => ['min' => 0, 'max' => 100],
+            ])
+            ->add('isTopStory', CheckboxType::class, [
+                'required' => false,
+                'label' => 'label.is_top_story',
+                'help' => 'help.article_top_story',
             ])
             ->add('tags', TagsInputType::class, [
                 'label' => 'label.tags',
@@ -74,10 +104,10 @@ final class PostType extends AbstractType
             // of the form handling process.
             // See https://symfony.com/doc/current/form/events.html
             ->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                /** @var Post $post */
-                $post = $event->getData();
-                if (null === $post->getSlug() && null !== $post->getTitle()) {
-                    $post->setSlug($this->slugger->slug($post->getTitle())->lower());
+                /** @var Article $article */
+                $article = $event->getData();
+                if (null === $article->getSlug() && null !== $article->getTitle()) {
+                    $article->setSlug($this->slugger->slug($article->getTitle())->lower());
                 }
             })
         ;
@@ -86,7 +116,8 @@ final class PostType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Post::class,
+            'data_class' => Article::class,
         ]);
     }
 }
+

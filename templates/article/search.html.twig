@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block body_id 'blog_search' %}
+{% block body_id 'article_search' %}
 
 {% block main %}
     {#
         Render a component by passing its name as first argument
         See https://symfony.com/bundles/ux-twig-component/current/index.html
     #}
-    {{ component('blog_search', {
+    {{ component('article_search', {
         query: query,
     }) }}
 {% endblock %}

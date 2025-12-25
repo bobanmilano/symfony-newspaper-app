@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block body_id 'blog_index' %}
+{% block body_id 'article_index' %}
 
 {% block main %}
-    {% for post in paginator.results %}
-        {{ include('blog/_post.html.twig') }}
+    {% for article in paginator.results %}
+        {{ include('article/_article.html.twig') }}
     {% else %}
         <div class="bg-body-tertiary mb-3 p-3 rounded">{{ 'post.no_posts_found'|trans }}</div>
     {% endfor %}
@@ -15,7 +15,7 @@
             <ul class="pagination pagination-lg">
                 {% if paginator.hasPreviousPage %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ path('blog_index_paginated', {page: paginator.previousPage, tag: tagName}) }}" rel="previous">
+                        <a class="page-link" href="{{ path('article_index_paginated', {page: paginator.previousPage, tag: tagName}) }}" rel="previous">
                             <twig:ux:icon name="tabler:arrow-left"/> {{ 'paginator.previous'|trans }}
                         </a>
                     </li>
@@ -31,13 +31,13 @@
                             <span class="page-link">{{ i }} <span class="sr-only">{{ 'paginator.current'|trans }}</span></span>
                         </li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="{{ path('blog_index_paginated', {page: i, tag: tagName}) }}">{{ i }}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ path('article_index_paginated', {page: i, tag: tagName}) }}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
 
                 {% if paginator.hasNextPage %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ path('blog_index_paginated', {page: paginator.nextPage, tag: tagName}) }}">
+                        <a class="page-link" href="{{ path('article_index_paginated', {page: paginator.nextPage, tag: tagName}) }}">
                             <span>{{ 'paginator.next'|trans }} <twig:ux:icon name="tabler:arrow-right"/></span>
                         </a>
                     </li>
@@ -55,5 +55,5 @@
     {{ parent() }}
 
     {{ show_source_code(_self) }}
-    {{ include('blog/_rss.html.twig') }}
+    {{ include('article/_rss.html.twig') }}
 {% endblock %}

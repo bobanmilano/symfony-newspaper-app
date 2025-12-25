@@ -11,7 +11,7 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Post;
+use App\Entity\Article;
 use App\Entity\User;
 use App\Event\CommentCreatedEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Notifies post's author about new comments.
+ * Notifies article's author about new comments.
  *
  * @author Oleg Voronkovich <oleg-voronkovich@yandex.ru>
  */
@@ -48,25 +48,25 @@ final readonly class CommentNotificationSubscriber implements EventSubscriberInt
     {
         $comment = $event->getComment();
 
-        /** @var Post $post */
-        $post = $comment->getPost();
+        /** @var Article $article */
+        $article = $comment->getArticle();
 
         /** @var User $author */
-        $author = $post->getAuthor();
+        $author = $article->getAuthor();
 
         /** @var string $emailAddress */
         $emailAddress = $author->getEmail();
 
-        $linkToPost = $this->urlGenerator->generate('blog_post', [
-            'slug' => $post->getSlug(),
+        $linkToArticle = $this->urlGenerator->generate('article_show', [
+            'slug' => $article->getSlug(),
             '_fragment' => 'comment_'.$comment->getId(),
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $subject = $this->translator->trans('notification.comment_created');
 
         $body = $this->translator->trans('notification.comment_created.description', [
-            'title' => $post->getTitle(),
-            'link' => $linkToPost,
+            'title' => $article->getTitle(),
+            'link' => $linkToArticle,
         ]);
 
         // See https://symfony.com/doc/current/mailer.html
