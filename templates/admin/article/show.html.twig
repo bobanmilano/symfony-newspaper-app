@@ -16,6 +16,36 @@
 
     {{ article.content|markdown_to_html|sanitize_html }}
 
+    {% if article.images is not empty %}
+        <h3>Images</h3>
+        <div class="row mb-3">
+            {% for image in article.images %}
+                <div class="col-md-3 mb-3">
+                     <div class="card h-100">
+                        <img src="{{ vich_uploader_asset(image, 'file') }}" class="card-img-top object-fit-cover" style="height: 150px;" alt="{{ image.caption }}">
+                        <div class="card-body">
+                            <p class="card-text small text-muted">{{ image.caption|default('No caption') }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if article.videos is not empty %}
+        <h3>Videos</h3>
+        <div class="row mb-3">
+            {% for video in article.videos %}
+                <div class="col-md-4 mb-3">
+                     <div class="ratio ratio-16x9 mb-2">
+                        <iframe src="{{ video.url|replace({'watch?v=': 'embed/'}) }}" title="{{ video.caption }}" allowfullscreen></iframe>
+                    </div>
+                    <p class="small text-muted">{{ video.caption|default('No caption') }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     {{ include('article/_article_tags.html.twig') }}
 {% endblock %}
 

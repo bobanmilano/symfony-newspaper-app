@@ -3,11 +3,17 @@
 {% block body_id 'article_index' %}
 
 {% block main %}
-    {% for article in paginator.results %}
-        {{ include('article/_article.html.twig') }}
-    {% else %}
-        <div class="bg-body-tertiary mb-3 p-3 rounded">{{ 'post.no_posts_found'|trans }}</div>
-    {% endfor %}
+    <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+        {% for article in paginator.results %}
+            <div class="col">
+                {{ include('article/_article.html.twig') }}
+            </div>
+        {% else %}
+             <div class="col-12">
+                <div class="bg-body-tertiary mb-3 p-3 rounded">{{ 'post.no_posts_found'|trans }}</div>
+            </div>
+        {% endfor %}
+    </div>
 
     {% if paginator.hasToPaginate %}
 

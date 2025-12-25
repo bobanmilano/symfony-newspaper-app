@@ -22,6 +22,14 @@
                 <source>article.too_many_tags</source>
                 <target>Too many tags (add { limit } tags or less)</target>
             </trans-unit>
+            <trans-unit id="article.too_many_images">
+                <source>article.too_many_images</source>
+                <target>Too many images (limit is { limit })</target>
+            </trans-unit>
+            <trans-unit id="article.too_many_videos">
+                <source>article.too_many_videos</source>
+                <target>Too many videos (limit is { limit })</target>
+            </trans-unit>
             <trans-unit id="comment.blank">
                 <source>comment.blank</source>
                 <target>Please don't leave your comment blank!</target>

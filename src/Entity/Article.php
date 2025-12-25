@@ -92,6 +92,7 @@ class Article
      */
     #[ORM\OneToMany(targetEntity: ArticleImage::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
+    #[Assert\Count(max: 5, maxMessage: 'article.too_many_images')]
     private Collection $images;
 
     /**
@@ -99,6 +100,7 @@ class Article
      */
     #[ORM\OneToMany(targetEntity: ArticleVideo::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
+    #[Assert\Count(max: 1, maxMessage: 'article.too_many_videos')]
     private Collection $videos;
 
     public function __construct()

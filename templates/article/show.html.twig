@@ -37,21 +37,7 @@
                     </div>
                 {% endif %}
 
-                {# Video Gallery #}
-                {% if article.videos is not empty %}
-                    <div class="row g-3">
-                        {% for video in article.videos %}
-                            <div class="{{ article.videos|length == 1 ? 'col-12' : 'col-md-6' }}">
-                                <div class="ratio ratio-16x9 rounded shadow-sm overflow-hidden">
-                                    <iframe src="{{ video.url|replace({'watch?v=': 'embed/'}) }}" title="{{ video.caption }}" allowfullscreen></iframe>
-                                </div>
-                                {% if video.caption %}
-                                    <p class="text-muted small text-center mt-2">{{ video.caption }}</p>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                {# Video Gallery removed from here #}
             </div>
         {% endif %}
 
@@ -61,6 +47,26 @@
             <span class="metadata"><twig:ux:icon name="tabler:folder"/> {{ article.category.name|trans }}</span>
         </p>
     </div>
+
+    {% if article.lead %}
+        <p class="lead fw-bold mb-4">{{ article.lead }}</p>
+    {% endif %}
+
+    {# Video Section (Middle) #}
+    {% if article.videos is not empty %}
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-10">
+                {% for video in article.videos|slice(0, 1) %}
+                    <div class="ratio ratio-16x9 rounded shadow-sm overflow-hidden">
+                        <iframe src="{{ video.url|replace({'watch?v=': 'embed/'}) }}" title="{{ video.caption }}" allowfullscreen></iframe>
+                    </div>
+                    {% if video.caption %}
+                        <p class="text-muted small text-center mt-2">{{ video.caption }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 
     {{ article.content|markdown_to_html|sanitize_html }}
 

@@ -250,6 +250,18 @@
                 <source>label.published_at</source>
                 <target>Published at</target>
             </trans-unit>
+            <trans-unit id="label.lead">
+                <source>label.lead</source>
+                <target>Lead Paragraph</target>
+            </trans-unit>
+            <trans-unit id="label.priority">
+                <source>label.priority</source>
+                <target>Priority</target>
+            </trans-unit>
+            <trans-unit id="label.is_top_story">
+                <source>label.is_top_story</source>
+                <target>Is Top Story</target>
+            </trans-unit>
             <trans-unit id="label.tags">
                 <source>label.tags</source>
                 <target>Tags</target>
@@ -403,17 +415,29 @@
                 <source>help.more_information</source>
                 <target><![CDATA[For more information, check out the <a href="https://symfony.com/doc">Symfony doc</a>.]]></target>
             </trans-unit>
-            <trans-unit id="help.post_summary">
-                <source>help.post_summary</source>
+            <trans-unit id="help.article_summary">
+                <source>help.article_summary</source>
                 <target>Summaries can't contain Markdown or HTML contents; only plain text.</target>
             </trans-unit>
-            <trans-unit id="help.post_publication">
-                <source>help.post_publication</source>
+            <trans-unit id="help.article_publication">
+                <source>help.article_publication</source>
                 <target>Set the date in the future to schedule the article publication.</target>
             </trans-unit>
-            <trans-unit id="help.post_content">
-                <source>help.post_content</source>
+            <trans-unit id="help.article_content">
+                <source>help.article_content</source>
                 <target>Use Markdown to format the article contents. HTML is allowed too.</target>
+            </trans-unit>
+            <trans-unit id="help.article_lead">
+                <source>help.article_lead</source>
+                <target>A short introduction or teaser for the article.</target>
+            </trans-unit>
+            <trans-unit id="help.article_priority">
+                <source>help.article_priority</source>
+                <target>Higher numbers (e.g., 10) appear first in sorting.</target>
+            </trans-unit>
+            <trans-unit id="help.article_top_story">
+                <source>help.article_top_story</source>
+                <target>Check this to feature the article as a Top Story.</target>
             </trans-unit>
             <trans-unit id="help.comment_content">
                 <source>help.comment_content</source>
