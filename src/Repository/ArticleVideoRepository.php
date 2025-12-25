@@ -7,12 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ArticleVideo>
- *
- * @method ArticleVideo|null find($id, $lockMode = null, $lockVersion = null)
- * @method ArticleVideo|null findOneBy(array $criteria, array $orderBy = null)
- * @method ArticleVideo[]    findAll()
- * @method ArticleVideo[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @template-extends ServiceEntityRepository<ArticleVideo>
  */
 class ArticleVideoRepository extends ServiceEntityRepository
 {
