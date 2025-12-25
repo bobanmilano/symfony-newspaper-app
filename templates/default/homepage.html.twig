@@ -2,46 +2,124 @@
 
 {% block body_id 'homepage' %}
 
-{#
-    the homepage is a special page which displays neither a header nor a footer.
-    this is done with the 'trick' of defining empty Twig blocks without any content
-#}
-{% block header %}{% endblock %}
-{% block footer %}{% endblock %}
-
 {% block body %}
-    <div class="page-header">
-        <h1>{{ 'title.homepage'|trans|raw }}</h1>
-
-        {% from 'default/_language_selector.html.twig' import render_language_selector %}
-        {{ render_language_selector(true) }}
-    </div>
-
-    <div class="row">
-        <div class="col-sm">
-            <div class="bg-body-tertiary px-3 py-5 rounded-3">
-                <p class="fs-4">
-                    {{ 'help.browse_app'|trans|raw }}
-                </p>
-                <p class="mb-0">
-                    <a class="btn btn-primary btn-lg" href="{{ path('article_index') }}">
-                        <twig:ux:icon name="tabler:users-group" font-size="21px" /> {{ 'action.browse_app'|trans }}
-                    </a>
-                </p>
-            </div>
+    <div style="margin-top: 100px;"></div>
+    <div class="row mb-5">
+        {# Hero Left: Top Story #}
+        <div class="col-lg-8">
+            {% if topStory %}
+                <article class="mb-4">
+                     {% set image = topStory.images|first %}
+                     {% if image %}
+                        <img src="{{ vich_uploader_asset(image, 'file') }}" class="w-100 object-fit-cover mb-3" style="height: 400px;" alt="{{ topStory.title }}">
+                     {% else %}
+                        <img src="https://picsum.photos/seed/{{ topStory.id }}/800/400" class="w-100 object-fit-cover mb-3" style="height: 400px;" alt="{{ topStory.title }}">
+                     {% endif %}
+                     
+                     <span class="badge bg-danger mb-2 text-uppercase rounded-0 p-2">Top Story</span>
+                     <h1 class="display-4 fw-bold mb-3 font-heading"><a href="{{ path('article_show', {slug: topStory.slug}) }}" class="text-dark text-decoration-none">{{ topStory.title }}</a></h1>
+                     {% if topStory.lead %}
+                        <p class="lead fs-4">{{ topStory.lead }}</p>
+                     {% else %}
+                        <p class="lead fs-4">{{ topStory.summary }}</p>
+                     {% endif %}
+                </article>
+            {% else %}
+                <div class="alert alert-info">No articles found. Start writing!</div>
+            {% endif %}
         </div>
 
-        <div class="col-sm">
-            <div class="bg-body-tertiary px-3 py-5 rounded-3">
-                <p class="fs-4">
-                    {{ 'help.browse_admin'|trans|raw }}
-                </p>
-                <p class="mb-0">
-                    <a class="btn btn-primary btn-lg" href="{{ path('admin_index') }}">
-                        <twig:ux:icon name="tabler:lock"/> {{ 'action.browse_admin'|trans }}
-                    </a>
-                </p>
+        {# Hero Right: Latest Headlines (vertical list) - limiting to 4 #}
+        <div class="col-lg-4 border-start ps-lg-4">
+            <h3 class="mb-3 text-uppercase fs-6 text-muted fw-bold ls-1 border-bottom pb-2">Latest News</h3>
+            <ul class="list-unstyled">
+                {% for article in latest|slice(0, 4) %}
+                    <li class="mb-3 pb-3 border-bottom">
+                         <span class="d-block text-muted small mb-1">{{ article.publishedAt|format_datetime('short', 'short') }}</span>
+                         <h4 class="h5 font-heading"><a href="{{ path('article_show', {slug: article.slug}) }}" class="text-dark text-decoration-none">{{ article.title }}</a></h4>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <hr class="my-5 border-secondary">
+
+    {# Featured Grid (Middle) #}
+    <div class="row mb-5">
+        <div class="col-12">
+            <h3 class="mb-4 fst-italic font-heading border-bottom pb-2">Featured Stories</h3>
+        </div>
+        {% for article in trending %}
+            <div class="col-md-4">
+                <article class="h-100">
+                     {% set image = article.images|first %}
+                     {% if image %}
+                        <img src="{{ vich_uploader_asset(image, 'file') }}" class="w-100 object-fit-cover mb-3" style="height: 200px;" alt="{{ article.title }}">
+                     {% else %}
+                         <img src="https://picsum.photos/seed/{{ article.id }}/400/200" class="w-100 object-fit-cover mb-3" style="height: 200px;" alt="{{ article.title }}">
+                     {% endif %}
+                     <h4 class="h5 fw-bold font-heading"><a href="{{ path('article_show', {slug: article.slug}) }}" class="text-dark text-decoration-none">{{ article.title }}</a></h4>
+                     <p class="small text-muted">{{ article.summary|length > 100 ? article.summary|slice(0, 100) ~ '...' : article.summary }}</p>
+                </article>
             </div>
+        {% endfor %}
+    </div>
+
+    {# Bottom Section #}
+    <div class="row">
+        {# Left: More News / Ticker #}
+        <div class="col-lg-8">
+             <h3 class="mb-4 fst-italic font-heading border-bottom pb-2">More News</h3>
+             {% for article in latest|slice(4, 100) %} {# Skip the first 4 used in hero right #}
+                <article class="row mb-4">
+                    <div class="col-md-4">
+                         {% set image = article.images|first %}
+                         {% if image %}
+                            <img src="{{ vich_uploader_asset(image, 'file') }}" class="w-100 object-fit-cover rounded" style="height: 120px;" alt="{{ article.title }}">
+                         {% else %}
+                             <img src="https://picsum.photos/seed/{{ article.id }}/200/120" class="w-100 object-fit-cover rounded" style="height: 120px;" alt="{{ article.title }}">
+                         {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <h4 class="h5 fw-bold mb-1 font-heading"><a href="{{ path('article_show', {slug: article.slug}) }}" class="text-dark text-decoration-none">{{ article.title }}</a></h4>
+                        <p class="small text-muted mb-2 text-uppercase">{{ article.category.name|trans }} &bull; {{ article.publishedAt|format_datetime('medium', 'none') }}</p>
+                        <p class="mb-0">{{ article.summary|length > 150 ? article.summary|slice(0, 150) ~ '...' : article.summary }}</p>
+                    </div>
+                </article>
+             {% endfor %}
+        </div>
+
+        {# Right: Sidebar #}
+        <div class="col-lg-4 ps-lg-5">
+            <div class="bg-light p-4 rounded mb-5 shadow-sm">
+                <h4 class="mb-3 font-heading border-bottom pb-2">Most Popular</h4>
+                <ol class="list-unstyled">
+                    {# Mocking most popular with trending (reversed) for now #}
+                    {% for article in trending|reverse %}
+                        <li class="mb-3 pb-2 border-bottom">
+                            <span class="fw-bold fs-4 text-muted me-2">{{ loop.index }}.</span> 
+                            <a href="{{ path('article_show', {slug: article.slug}) }}" class="text-dark text-decoration-none fw-bold">{{ article.title }}</a>
+                        </li>
+                    {% endfor %}
+                </ol>
+            </div>
+
+            <div class="mb-5">
+                <h4 class="mb-3 font-heading">Explore Topics</h4>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for tag in tags %}
+                        <a href="{{ path('article_index', {'tag': tag.name}) }}" class="btn btn-sm btn-outline-secondary">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+             
+             {# Old Browsing Links #}
+             <div class="border-top pt-4">
+                <p class="small text-muted fw-bold text-uppercase">Project Links</p>
+                 <a class="d-block mb-2 text-decoration-none" href="{{ path('article_index') }}"><twig:ux:icon name="tabler:archive"/> Browse Archive</a>
+                 <a class="d-block text-decoration-none" href="{{ path('admin_index') }}"><twig:ux:icon name="tabler:lock"/> Admin Login</a>
+             </div>
         </div>
     </div>
 {% endblock %}

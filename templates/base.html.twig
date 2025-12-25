@@ -12,6 +12,9 @@
         <title>{% block title %}Symfony Demo application{% endblock %}</title>
         <link rel="alternate" type="application/rss+xml" title="{{ 'rss.title'|trans }}" href="{{ path('article_rss') }}">
         <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
 
         {#
             Those two blocks defines frontend entrypoint for CSS and JavaScript assets

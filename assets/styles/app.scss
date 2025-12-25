@@ -6,14 +6,19 @@
 @import "./rtl";
 
 :root {
-  --font-heading: 2.5rem;
-  --font-title: 2rem;
+  --font-heading: 'Playfair Display', serif;
+  --font-title: 2.5rem;
   --font-subtitle: 1.5rem;
-  --font-default: 19px;
+  --font-default: 'Inter', sans-serif;
+  --font-size-default: 18px;
+  /* Renamed to avoid confusion with font-family variable */
   --secondary-color: #ecf0f1;
-  --text-color: #2c3e50;
-  --blue: #007bff;
-  --red: #dc3545;
+  --text-color: #212529;
+  /* Dark Anthracite */
+  --blue: #003366;
+  /* Dark Royal Blue */
+  --red: #8B0000;
+  /* Dark Red */
   --yellow: #ffc107;
   --green: #28a745;
   --success: var(--green);
@@ -35,15 +40,37 @@
 
 /* Basic styles
    ------------------------------------------------------------------------- */
-h1, .h1 {
-  font-size: var(--font-heading);
+body {
+  font-family: var(--font-default);
+  font-size: var(--font-size-default);
+  color: var(--text-color);
 }
 
-h3, .h3 {
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+}
+
+h1,
+.h1 {
+  font-size: var(--font-title);
+}
+
+h3,
+.h3 {
   font-size: var(--font-subtitle);
 }
 
-p, ul, ol {
+p,
+ul,
+ol {
   font-size: var(--font-default);
   margin-bottom: 1.5em
 }
@@ -64,7 +91,8 @@ code {
   padding: 2px 4px;
 }
 
-.text-danger, .text-danger:hover {
+.text-danger,
+.text-danger:hover {
   color: var(--red);
 }
 
@@ -118,20 +146,21 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-body:not(#homepage) {
-  padding-top: 110px
+  padding-top: 110px;
 }
 
 header nav.navbar {
   margin-bottom: var(--navbar-margin-bottom);
 }
+
 header nav.navbar .navbar-brand {
   padding: 0;
 }
+
 header nav.navbar .navbar-toggler {
   padding: 0 var(--navbar-toggler-padding-x);
 }
+
 header nav.navbar .nav-item {
   font-size: 18px;
   margin-left: 20px;
@@ -141,30 +170,37 @@ header nav.navbar .nav-item {
   /* needed to lower the default 1,040 value which interferes with some styles */
   z-index: 1024;
 }
+
 #locale-selector-modal {
   background: var(--text-color);
 }
+
 @media (min-width: 768px) {
   #locale-selector-modal .modal-dialog {
     max-width: 800px;
     width: 96%;
   }
 }
+
 #locale-selector-modal .modal-content {
   border: 0;
 }
+
 #locale-selector-modal .modal-header {
   background: var(--text-color);
   border-bottom: 0;
   color: var(--white);
 }
+
 #locale-selector-modal .modal-body {
   background: var(--text-color);
 }
+
 #locale-selector-modal .modal-body .locales {
   list-style: none;
   padding: 0;
 }
+
 @media (min-width: 768px) {
   #locale-selector-modal .modal-body .locales {
     display: grid;
@@ -172,19 +208,23 @@ header nav.navbar .nav-item {
     grid-gap: 10px 20px;
   }
 }
+
 #locale-selector-modal .modal-body .locales li {
   border-radius: 4px;
   margin-bottom: 10px;
   position: relative;
 }
+
 @media (min-width: 768px) {
   #locale-selector-modal .modal-body .locales li {
     margin: 0;
   }
 }
+
 #locale-selector-modal .modal-body .locales li.rtl a {
   direction: rtl;
 }
+
 #locale-selector-modal .modal-body .locales li a {
   align-items: center;
   background: #fff;
@@ -194,6 +234,7 @@ header nav.navbar .nav-item {
   justify-content: space-between;
   padding: 10px 20px;
 }
+
 #locale-selector-modal .modal-body .locales li a small {
   border-radius: 4px;
   border: 2px solid var(--gray-300);
@@ -207,21 +248,25 @@ header nav.navbar .nav-item {
   text-align: center;
   text-transform: uppercase;
 }
+
 #locale-selector-modal .modal-body .locales li:hover a {
   outline: 3px solid #18bc9c;
   outline-offset: -5px;
 }
+
 #locale-selector-modal .modal-body .locales li:hover a small {
   background: #18bc9c;
   border-color: #18bc9c;
   color: #fff;
 }
+
 #locale-selector-modal .modal-body .locales li.active a,
 #locale-selector-modal .modal-body .locales li:hover.active a {
   background: #18bc9c;
   color: #fff;
   outline: none;
 }
+
 #locale-selector-modal .modal-body .locales li.active a small,
 #locale-selector-modal .modal-body .locales li:hover.active a small {
   background: transparent;
@@ -235,7 +280,8 @@ header nav.navbar .nav-item {
   min-height: 600px
 }
 
-.body-container #main h1, .body-container #main h2 {
+.body-container #main h1,
+.body-container #main h2 {
   margin-top: 0
 }
 
@@ -247,7 +293,7 @@ header nav.navbar .nav-item {
   font-size: 15px
 }
 
-#sidebar p + p {
+#sidebar p+p {
   margin: 1.5em 0 0
 }
 
@@ -262,7 +308,8 @@ footer {
   padding-bottom: 2em
 }
 
-footer p, footer a {
+footer p,
+footer a {
   color: var(--gray-700);
   font-size: 13px;
   margin-bottom: 0.25em
@@ -280,17 +327,37 @@ footer #footer-resources svg {
   border-bottom: 0;
   padding: 1rem 1rem 0;
 }
-#sourceCodeModal .modal-header h3 { font-size: 18px; margin-top: 0; }
+
+#sourceCodeModal .modal-header h3 {
+  font-size: 18px;
+  margin-top: 0;
+}
+
 #sourceCodeModal .nav-tabs {
   border-bottom-color: #95a5a6;
   margin-bottom: 15px;
 }
-#sourceCodeModal .nav-tabs .nav-link { font-size: 16px; }
-#sourceCodeModal .nav-tabs .nav-link.active { border-color: #95a5a6 #95a5a6 #fff; }
-#sourceCodeModal .nav-tabs .nav-link:not(.active):hover { border-color: transparent; text-decoration: underline; }
-#sourceCodeModal .tab-content {
-  .file-link { font-size: 16px; margin: 0 0 10px 5px; }
+
+#sourceCodeModal .nav-tabs .nav-link {
+  font-size: 16px;
 }
+
+#sourceCodeModal .nav-tabs .nav-link.active {
+  border-color: #95a5a6 #95a5a6 #fff;
+}
+
+#sourceCodeModal .nav-tabs .nav-link:not(.active):hover {
+  border-color: transparent;
+  text-decoration: underline;
+}
+
+#sourceCodeModal .tab-content {
+  .file-link {
+    font-size: 16px;
+    margin: 0 0 10px 5px;
+  }
+}
+
 #sourceCodeModal pre {
   margin-bottom: 0;
   padding: 0;
@@ -298,6 +365,7 @@ footer #footer-resources svg {
   word-break: break-all;
   word-wrap: break-word;
 }
+
 #sourceCodeModal pre code {
   border-radius: 6px;
   white-space: pre-wrap;
@@ -338,18 +406,22 @@ body#requirements_checker .panel li {
 /* Page: 'Homepage'
    ------------------------------------------------------------------------- */
 body#homepage {
-  text-align: center;
+  padding-top: 110px !important;
+  /* Force padding to prevent fixed header overlap */
 }
+
 body#homepage .page-header {
   display: flex;
   justify-content: space-between;
   padding-bottom: 9.5px;
   margin: 60px 0 30px;
 }
+
 body#homepage .page-header h1 {
   font-size: 32px;
   margin: 0;
 }
+
 body#homepage .page-header a.language-selector-dropdown-button {
   align-items: center;
   border: 2px solid var(--gray-300);
@@ -360,10 +432,12 @@ body#homepage .page-header a.language-selector-dropdown-button {
   line-height: 1;
   padding: 5px 15px;
 }
+
 body#homepage .page-header a.language-selector-dropdown-button:hover {
   background: var(--gray-100);
   border-color: var(--gray-800);
 }
+
 body#homepage .page-header a.language-selector-dropdown-button .current-language {
   display: inline-flex;
   margin-inline: 5px 10px;
@@ -401,6 +475,7 @@ body#login #login-help table td {
   padding: .5rem .75rem;
   background-color: var(--gray-200);
 }
+
 .post-tags .badge.badge-success {
   background-color: var(--success);
   color: var(--white);

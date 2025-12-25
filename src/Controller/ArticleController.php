@@ -46,6 +46,36 @@ final class ArticleController extends AbstractController
      *
      * See https://symfony.com/doc/current/routing.html#special-parameters
      */
+    public function homepage(ArticleRepository $articles, TagRepository $tags): Response
+    {
+        $topStory = $articles->findOneBy(['isTopStory' => true], ['publishedAt' => 'DESC', 'priority' => 'DESC']);
+        if (!$topStory) {
+            $topStory = $articles->findOneBy([], ['publishedAt' => 'DESC', 'priority' => 'DESC']);
+        }
+
+        $latestPaginator = $articles->findLatest(1);
+        $latestArticles = [];
+        foreach ($latestPaginator->getResults() as $article) {
+            if ($topStory && $article->getId() === $topStory->getId()) {
+                continue;
+            }
+            $latestArticles[] = $article;
+            if (count($latestArticles) >= 10) {
+                break;
+            }
+        }
+
+        // Simulating "Trending" - for now just take the first 3 of the latest
+        $trending = array_slice($latestArticles, 0, 3);
+
+        return $this->render('default/homepage.html.twig', [
+            'topStory' => $topStory,
+            'latest' => $latestArticles,
+            'trending' => $trending,
+            'tags' => $tags->findAll(),
+        ]);
+    }
+
     #[Route('/', name: 'article_index', defaults: ['page' => '1', '_format' => 'html'], methods: ['GET'])]
     #[Route('/rss.xml', name: 'article_rss', defaults: ['page' => '1', '_format' => 'xml'], methods: ['GET'])]
     #[Route('/page/{page}', name: 'article_index_paginated', defaults: ['_format' => 'html'], requirements: ['page' => Requirement::POSITIVE_INT], methods: ['GET'])]
