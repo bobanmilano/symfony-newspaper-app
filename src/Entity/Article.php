@@ -87,11 +87,27 @@ class Article
     #[Assert\Count(max: 4, maxMessage: 'article.too_many_tags')]
     private Collection $tags;
 
+    /**
+     * @var Collection<int, ArticleImage>
+     */
+    #[ORM\OneToMany(targetEntity: ArticleImage::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $images;
+
+    /**
+     * @var Collection<int, ArticleVideo>
+     */
+    #[ORM\OneToMany(targetEntity: ArticleVideo::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $videos;
+
     public function __construct()
     {
         $this->publishedAt = new \DateTimeImmutable();
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->images = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -241,6 +257,58 @@ class Article
     public function getTags(): Collection
     {
         return $this->tags;
+    }
+
+    /**
+     * @return Collection<int, ArticleImage>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(ArticleImage $image): void
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setArticle($this);
+        }
+    }
+
+    public function removeImage(ArticleImage $image): void
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
+            }
+        }
+    }
+
+    /**
+     * @return Collection<int, ArticleVideo>
+     */
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(ArticleVideo $video): void
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos->add($video);
+            $video->setArticle($this);
+        }
+    }
+
+    public function removeVideo(ArticleVideo $video): void
+    {
+        if ($this->videos->removeElement($video)) {
+            // set the owning side to null (unless already changed)
+            if ($video->getArticle() === $this) {
+                $video->setArticle(null);
+            }
+        }
     }
 }
 

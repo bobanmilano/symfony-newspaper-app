@@ -1429,13 +1429,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         html_to_text_converter?: scalar|null, // A service implementing the "Symfony\Component\Mime\HtmlToTextConverter\HtmlToTextConverterInterface". // Default: null
  *     },
  * }
- * @psalm-type DebugConfig = array{
- *     max_items?: int, // Max number of displayed items past the first level, -1 means no limit. // Default: 2500
- *     min_depth?: int, // Minimum tree depth to clone all the items, 1 is default. // Default: 1
- *     max_string_length?: int, // Max length of displayed strings, -1 means no limit. // Default: -1
- *     dump_destination?: scalar|null, // A stream URL where dumps should be written to. // Default: null
- *     theme?: "dark"|"light", // Changes the color of the dump() output when rendered directly on the templating. "dark" (default) or "light". // Default: "dark"
- * }
  * @psalm-type WebProfilerConfig = array{
  *     toolbar?: bool|array{ // Profiler toolbar configuration
  *         enabled?: bool, // Default: false
@@ -1443,6 +1436,12 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     },
  *     intercept_redirects?: bool, // Default: false
  *     excluded_ajax_paths?: scalar|null, // Default: "^/((index|app(_[\\w]+)?)\\.php/)?_wdt"
+ * }
+ * @psalm-type DamaDoctrineTestConfig = array{
+ *     enable_static_connection?: mixed, // Default: true
+ *     enable_static_meta_data_cache?: bool, // Default: true
+ *     enable_static_query_cache?: bool, // Default: true
+ *     connection_keys?: list<mixed>,
  * }
  * @psalm-type DoctrineMigrationsConfig = array{
  *     enable_service_migrations?: bool, // Whether to enable fetching migrations from the service container. // Default: false
@@ -1467,11 +1466,6 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     organize_migrations?: scalar|null, // Organize migrations mode. Possible values are: "BY_YEAR", "BY_YEAR_AND_MONTH", false // Default: false
  *     enable_profiler?: bool, // Whether or not to enable the profiler collector to calculate and visualize migration status. This adds some queries overhead. // Default: false
  *     transactional?: bool, // Whether or not to wrap migrations in a single transaction. // Default: true
- * }
- * @psalm-type MakerConfig = array{
- *     root_namespace?: scalar|null, // Default: "App"
- *     generate_final_classes?: bool, // Default: true
- *     generate_final_entities?: bool, // Default: false
  * }
  * @psalm-type TwigExtraConfig = array{
  *     cache?: bool|array{
@@ -1570,11 +1564,55 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     },
  *     ignore_not_found?: bool, // Ignore error when an icon is not found. Set to 'true' to fail silently. // Default: false
  * }
- * @psalm-type DamaDoctrineTestConfig = array{
- *     enable_static_connection?: mixed, // Default: true
- *     enable_static_meta_data_cache?: bool, // Default: true
- *     enable_static_query_cache?: bool, // Default: true
- *     connection_keys?: list<mixed>,
+ * @psalm-type VichUploaderConfig = array{
+ *     default_filename_attribute_suffix?: scalar|null, // Default: "_name"
+ *     db_driver: scalar|null,
+ *     storage?: scalar|null, // Default: "file_system"
+ *     use_flysystem_to_resolve_uri?: bool, // Default: false
+ *     twig?: scalar|null, // twig requires templating // Default: true
+ *     form?: scalar|null, // Default: true
+ *     metadata?: array{
+ *         cache?: scalar|null, // Default: "file"
+ *         type?: scalar|null, // Default: "attribute"
+ *         file_cache?: array{
+ *             dir?: scalar|null, // Default: "%kernel.cache_dir%/vich_uploader"
+ *         },
+ *         auto_detection?: bool, // Default: true
+ *         directories?: list<array{ // Default: []
+ *             path: scalar|null,
+ *             namespace_prefix?: scalar|null, // Default: ""
+ *         }>,
+ *     },
+ *     mappings?: array<string, array{ // Default: []
+ *         uri_prefix?: scalar|null, // Default: "/uploads"
+ *         upload_destination?: scalar|null, // Default: null
+ *         namer?: string|array{
+ *             service?: scalar|null, // Default: null
+ *             options?: mixed, // Default: null
+ *         },
+ *         directory_namer?: string|array{
+ *             service?: scalar|null, // Default: null
+ *             options?: mixed, // Default: null
+ *         },
+ *         delete_on_remove?: scalar|null, // Default: true
+ *         erase_fields?: scalar|null, // Default: true
+ *         delete_on_update?: scalar|null, // Default: true
+ *         inject_on_load?: scalar|null, // Default: false
+ *         namer_keep_extension?: scalar|null, // Default: false
+ *         db_driver?: scalar|null, // Default: null
+ *     }>,
+ * }
+ * @psalm-type DebugConfig = array{
+ *     max_items?: int, // Max number of displayed items past the first level, -1 means no limit. // Default: 2500
+ *     min_depth?: int, // Minimum tree depth to clone all the items, 1 is default. // Default: 1
+ *     max_string_length?: int, // Max length of displayed strings, -1 means no limit. // Default: -1
+ *     dump_destination?: scalar|null, // A stream URL where dumps should be written to. // Default: null
+ *     theme?: "dark"|"light", // Changes the color of the dump() output when rendered directly on the templating. "dark" (default) or "light". // Default: "dark"
+ * }
+ * @psalm-type MakerConfig = array{
+ *     root_namespace?: scalar|null, // Default: "App"
+ *     generate_final_classes?: bool, // Default: true
+ *     generate_final_entities?: bool, // Default: false
  * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
@@ -1592,6 +1630,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     stimulus?: StimulusConfig,
  *     symfonycasts_sass?: SymfonycastsSassConfig,
  *     ux_icons?: UxIconsConfig,
+ *     vich_uploader?: VichUploaderConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1611,6 +1650,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         stimulus?: StimulusConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         ux_icons?: UxIconsConfig,
+ *         vich_uploader?: VichUploaderConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1628,6 +1668,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         stimulus?: StimulusConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         ux_icons?: UxIconsConfig,
+ *         vich_uploader?: VichUploaderConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1647,6 +1688,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         stimulus?: StimulusConfig,
  *         symfonycasts_sass?: SymfonycastsSassConfig,
  *         ux_icons?: UxIconsConfig,
+ *         vich_uploader?: VichUploaderConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

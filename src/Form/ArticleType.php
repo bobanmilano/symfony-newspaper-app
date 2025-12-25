@@ -17,6 +17,7 @@ use App\Form\Type\TagsInputType;
 use App\Repository\CategoryRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -76,7 +77,7 @@ final class ArticleType extends AbstractType
             ->add('category', EntityType::class, [
                 'class' => 'App\Entity\Category',
                 'choice_label' => 'name',
-                'query_builder' => fn () => $this->categoryRepository->createQueryBuilder('c')
+                'query_builder' => fn() => $this->categoryRepository->createQueryBuilder('c')
                     ->orderBy('c.name', 'ASC'),
                 'label' => 'label.category',
                 'required' => true,
@@ -99,6 +100,20 @@ final class ArticleType extends AbstractType
             ->add('tags', TagsInputType::class, [
                 'label' => 'label.tags',
                 'required' => false,
+            ])
+            ->add('images', CollectionType::class, [
+                'entry_type' => ArticleImageType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
+            ])
+            ->add('videos', CollectionType::class, [
+                'entry_type' => ArticleVideoType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'label' => false,
             ])
             // form events let you modify information or fields at different steps
             // of the form handling process.

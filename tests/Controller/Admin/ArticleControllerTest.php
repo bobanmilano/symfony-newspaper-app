@@ -130,6 +130,7 @@ class ArticleControllerTest extends WebTestCase
             'article[content]' => $articleContent,
         ]);
         $this->client->submit($form);
+        $this->assertResponseRedirects('/en/admin/article/', Response::HTTP_SEE_OTHER);
 
         // article titles must be unique, so trying to create the same article twice should result in an error
         $this->client->submit($form);

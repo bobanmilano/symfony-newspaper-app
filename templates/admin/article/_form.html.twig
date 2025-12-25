@@ -12,7 +12,77 @@
 {% endif %}
 
 {{ form_start(form, {attr: attr|default({})}) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.summary) }}
+    {{ form_row(form.lead) }}
+    {{ form_row(form.content) }}
+    {{ form_row(form.category) }}
+    {{ form_row(form.publishedAt) }}
+    {{ form_row(form.priority) }}
+    {{ form_row(form.isTopStory) }}
+    {{ form_row(form.tags) }}
+
+    <fieldset class="mb-3">
+        <legend>Media</legend>
+        
+        <div class="mb-3">
+            {{ form_label(form.images) }}
+            <div class="messages" 
+                data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}"
+                data-index="{{ form.images|length }}"
+            >
+                {% for image in form.images %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            {{ form_widget(image) }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm add-item-link" data-collection-holder-class="messages">
+                Add Image
+            </button>
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.videos) }}
+            <div class="videos" 
+                data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}"
+                data-index="{{ form.videos|length }}"
+            >
+                {% for video in form.videos %}
+                     <div class="card mb-2">
+                        <div class="card-body">
+                            {{ form_widget(video) }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm add-item-link" data-collection-holder-class="videos">
+                Add Video
+            </button>
+        </div>
+    </fieldset>
+
+    {# render remaining fields (CSRF token, etc.) #}
+    {{ form_rest(form) }}
+
+    <script>
+        document.querySelectorAll('.add-item-link').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const collectionHolder = e.target.previousElementSibling;
+                const prototype = collectionHolder.dataset.prototype;
+                const index = collectionHolder.dataset.index;
+                const newForm = prototype.replace(/__name__/g, index);
+                
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = '<div class="card mb-2"><div class="card-body">' + newForm + '</div></div>';
+                
+                collectionHolder.appendChild(wrapper.firstChild);
+                collectionHolder.dataset.index = parseInt(index) + 1;
+            });
+        });
+    </script>
 
     <button type="submit" class="{{ button_css|default('btn btn-primary') }}">
         <twig:ux:icon name="tabler:save-changes"/> {{ button_label|default('label.create_post'|trans) }}

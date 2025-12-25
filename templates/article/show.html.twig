@@ -5,10 +5,57 @@
 {% block main %}
     <h1>{{ article.title }}</h1>
 
-    <p class="post-metadata">
-        <span class="metadata"><twig:ux:icon name="tabler:calendar-month"/> {{ article.publishedAt|format_datetime('long', 'medium', '', 'UTC') }}</span>
-        <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>
-    </p>
+    <div class="article-metadata">
+        {% if article.images is not empty %}
+             <div id="articleCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for image in article.images %}
+                        <div class="carousel-item {{ loop.first ? 'active' : '' }}">
+                            <img src="{{ vich_uploader_asset(image, 'file') }}" class="d-block w-100 object-fit-cover" style="max-height: 500px;" alt="{{ image.caption }}">
+                            {% if image.caption %}
+                                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded">
+                                    <p class="mb-0">{{ image.caption }}</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if article.images|length > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#articleCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#articleCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <p class="article-metadata">
+            <span class="metadata"><twig:ux:icon name="tabler:calendar-time"/> {{ article.publishedAt|format_datetime('medium', 'medium') }}</span>
+            <span class="metadata"><twig:ux:icon name="tabler:user"/> {{ article.author.fullName }}</span>
+            <span class="metadata"><twig:ux:icon name="tabler:folder"/> {{ article.category.name|trans }}</span>
+        </p>
+    </div>
+
+    {% if article.videos is not empty %}
+        <div class="row mb-4">
+            {% for video in article.videos %}
+                <div class="col-md-6 mb-3">
+                    <div class="ratio ratio-16x9">
+                        {# Naive implementation for YouTube embeds - in prod usage would use an embed service or parse ID #}
+                        {# Assuming user pastes full URL: replace watch?v= with embed/ #}
+                        <iframe src="{{ video.url|replace({'watch?v=': 'embed/'}) }}" title="{{ video.caption }}" allowfullscreen></iframe>
+                    </div>
+                     {% if video.caption %}
+                        <p class="text-muted small text-center">{{ video.caption }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     {{ article.content|markdown_to_html|sanitize_html }}
 

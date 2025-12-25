@@ -172,6 +172,8 @@ final class ArticleController extends AbstractController
         // by Doctrine, except for SQLite (the database used in this application)
         // because foreign key support is not enabled by default in SQLite
         $article->getTags()->clear();
+        $article->getImages()->clear();
+        $article->getVideos()->clear();
 
         $entityManager->remove($article);
         $entityManager->flush();
