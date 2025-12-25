@@ -2,6 +2,7 @@
 
 namespace App\Twig\Components;
 
+use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -13,6 +14,9 @@ final class CategoryMenuComponent
     ) {
     }
 
+    /**
+     * @return Category[]
+     */
     public function getCategories(): array
     {
         return $this->categoryRepository->findAllOrderedByName();
