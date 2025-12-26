@@ -63,25 +63,25 @@ Dieses Dokument beschreibt die schrittweise Transformation des Symfony Demo Blog
 **Ziel:** Artikel mit Bildern und Videos
 
 ### Aufgaben:
-- [ ] **Bilder-System:**
-  - Upload-System implementieren (Symfony UploadedFile)
-  - Storage: `public/uploads/articles/`
-  - Neue Entity `ArticleImage` (Many-to-One zu Article)
-  - Vorschaubilder/Thumbnails generieren (optional: Intervention Image)
-  - Bildunterschriften/Alt-Text
-  - Galerie pro Artikel (optional)
+- [x] **Bilder-System:**
+  - [x] Upload-System implementieren (Symfony UploadedFile / VichUploader)
+  - [x] Storage: `public/uploads/articles/`
+  - [x] Neue Entity `ArticleImage` (Many-to-One zu Article)
+  - [x] Vorschaubilder/Thumbnails generieren (via CSS/Vich)
+  - [x] Bildunterschriften/Alt-Text
+  - [x] Galerie pro Artikel
 
-- [ ] **Videos-System:**
-  - Neue Entity `ArticleVideo` (URL/Link, nicht Upload)
-  - Embed-Support (YouTube, Vimeo, etc.)
-  - Video-Thumbnail/Preview
-  - Position im Artikel (zwischen Textabschnitten)
+- [x] **Videos-System:**
+  - [x] Neue Entity `ArticleVideo` (URL/Link, nicht Upload)
+  - [x] Embed-Support (YouTube, Vimeo, etc.)
+  - [x] Video-Thumbnail/Preview (Embed)
+  - [x] Position im Artikel (zwischen Textabschnitten)
 
-- [ ] **Artikel-Editor:**
-  - Rich-Text-Editor integrieren (z.B. TinyMCE/CKEditor) oder Markdown mit Media-Unterstützung
-  - Drag & Drop für Bilder
-  - Video-Embed-Button
-  - Media-Verwaltung im Editor
+- [x] **Artikel-Editor:**
+  - [x] Rich-Text-Editor integrieren (z.B. TinyMCE/CKEditor) oder Markdown mit Media-Unterstützung
+  - [x] Drag & Drop für Bilder (via CollectionType)
+  - [x] Video-Embed-Button (via CollectionType)
+  - [x] Media-Verwaltung im Editor
 
 **Ergebnis:** Artikel können Bilder und Videos enthalten
 
