@@ -94,25 +94,25 @@ Dieses Dokument beschreibt die schrittweise Transformation des Symfony Demo Blog
 **Ziel:** Zeitungsähnliches Layout
 
 ### Aufgaben:
-- [ ] **Startseite-Redesign:**
-  - Hero-Bereich (Top Story mit großem Bild)
-  - Grid-Layout (2-3 Spalten)
-  - Kategorie-Bereiche (Politik, Sport, etc.)
-  - Sidebar (Werbung, beliebte Artikel, Newsletter)
-  - Responsive Design (Mobile-First)
+- [x] **Startseite-Redesign:**
+  - [x] Hero-Bereich (Top Story mit großem Bild)
+  - [x] Grid-Layout (2-3 Spalten)
+  - [x] Kategorie-Bereiche (Politik, Sport, etc.)
+  - [x] Sidebar (Werbung, beliebte Artikel, Newsletter)
+  - [x] Responsive Design (Mobile-First)
 
-- [ ] **Artikel-Detailseite:**
-  - Zeitungsähnliches Layout
-  - Autor-Info prominent
-  - Social Share Buttons
-  - Verwandte Artikel
-  - Kommentare (wie bisher)
+- [x] **Artikel-Detailseite:**
+  - [x] Zeitungsähnliches Layout
+  - [x] Autor-Info prominent
+  - [ ] Social Share Buttons
+  - [ ] Verwandte Artikel
+  - [x] Kommentare (wie bisher)
 
-- [ ] **Design-System:**
-  - Typografie (Serif für Artikel, Sans-Serif für UI)
-  - Farbpalette (Zeitungsstil)
-  - Spacing/Layout-Komponenten
-  - SCSS-Variablen anpassen
+- [x] **Design-System:**
+  - [x] Typografie (Serif für Artikel, Sans-Serif für UI)
+  - [x] Farbpalette (Zeitungsstil)
+  - [x] Spacing/Layout-Komponenten
+  - [x] SCSS-Variablen anpassen
 
 **Ergebnis:** Zeitungsähnliches Design
 

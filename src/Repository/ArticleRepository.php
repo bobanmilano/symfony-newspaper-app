@@ -40,13 +40,15 @@ class ArticleRepository extends ServiceEntityRepository
     public function findLatest(int $page = 1, ?Tag $tag = null, ?Category $category = null): Paginator
     {
         $qb = $this->createQueryBuilder('a')
-            ->addSelect('u', 't', 'c')
+            ->addSelect('u', 't', 'c', 'i', 'v')
             ->innerJoin('a.author', 'u')
             ->leftJoin('a.tags', 't')
             ->leftJoin('a.category', 'c')
+            ->leftJoin('a.images', 'i')
+            ->leftJoin('a.videos', 'v')
             ->where('a.publishedAt <= :now')
-            ->orderBy('a.priority', 'DESC')
-            ->addOrderBy('a.publishedAt', 'DESC')
+            ->orderBy('a.publishedAt', 'DESC')
+            ->addOrderBy('a.priority', 'DESC')
             ->setParameter('now', new \DateTimeImmutable())
         ;
 
@@ -66,6 +68,62 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[]
      */
+    public function findLatestRaw(int $limit = 10, ?Tag $tag = null, ?Category $category = null): array
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->addSelect('u', 't', 'c', 'i', 'v')
+            ->innerJoin('a.author', 'u')
+            ->leftJoin('a.tags', 't')
+            ->leftJoin('a.category', 'c')
+            ->leftJoin('a.images', 'i')
+            ->leftJoin('a.videos', 'v')
+            ->where('a.publishedAt <= :now')
+            ->orderBy('a.publishedAt', 'DESC')
+            ->addOrderBy('a.priority', 'DESC')
+            ->setParameter('now', new \DateTimeImmutable())
+            ->setMaxResults($limit)
+        ;
+
+        if (null !== $tag) {
+            $qb->andWhere(':tag MEMBER OF a.tags')
+                ->setParameter('tag', $tag);
+        }
+
+        if (null !== $category) {
+            $qb->andWhere('a.category = :category')
+                ->setParameter('category', $category);
+        }
+
+        // Use Doctrine Paginator to correctly handle the LIMIT when fetch-joining collections (images, tags)
+        // This ensures checking "15" means "15 Articles", not "15 SQL rows"
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($qb, true);
+
+        return iterator_to_array($paginator);
+    }
+
+    public function findOneTopStory(): ?Article
+    {
+        return $this->createQueryBuilder('a')
+            ->addSelect('u', 't', 'c', 'i', 'v')
+            ->innerJoin('a.author', 'u')
+            ->leftJoin('a.tags', 't')
+            ->leftJoin('a.category', 'c')
+            ->leftJoin('a.images', 'i')
+            ->leftJoin('a.videos', 'v')
+            ->where('a.isTopStory = :topStory')
+            ->andWhere('a.publishedAt <= :now')
+            ->setParameter('topStory', true)
+            ->setParameter('now', new \DateTimeImmutable())
+            ->orderBy('a.publishedAt', 'DESC')
+            ->addOrderBy('a.priority', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @return Article[]
+     */
     public function findBySearchQuery(string $query, int $limit = Paginator::PAGE_SIZE): array
     {
         $searchTerms = $this->extractSearchTerms($query);
@@ -78,21 +136,36 @@ class ArticleRepository extends ServiceEntityRepository
 
         foreach ($searchTerms as $key => $term) {
             $queryBuilder
-                ->orWhere('a.title LIKE :t_'.$key)
-                ->setParameter('t_'.$key, '%'.$term.'%')
+                ->orWhere('a.title LIKE :t_' . $key)
+                ->setParameter('t_' . $key, '%' . $term . '%')
             ;
         }
 
         /** @var Article[] $result */
         $result = $queryBuilder
-            ->orderBy('a.priority', 'DESC')
-            ->addOrderBy('a.publishedAt', 'DESC')
+            ->orderBy('a.publishedAt', 'DESC')
+            ->addOrderBy('a.priority', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult()
         ;
 
         return $result;
+    }
+
+    public function findOneBySlug(string $slug): ?Article
+    {
+        return $this->createQueryBuilder('a')
+            ->addSelect('u', 't', 'c', 'i', 'v')
+            ->innerJoin('a.author', 'u')
+            ->leftJoin('a.tags', 't')
+            ->leftJoin('a.category', 'c')
+            ->leftJoin('a.images', 'i')
+            ->leftJoin('a.videos', 'v')
+            ->where('a.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     /**
@@ -105,8 +178,8 @@ class ArticleRepository extends ServiceEntityRepository
             ->andWhere('a.publishedAt <= :now')
             ->setParameter('topStory', true)
             ->setParameter('now', new \DateTimeImmutable())
-            ->orderBy('a.priority', 'DESC')
-            ->addOrderBy('a.publishedAt', 'DESC')
+            ->orderBy('a.publishedAt', 'DESC')
+            ->addOrderBy('a.priority', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult()

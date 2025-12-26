@@ -46,20 +46,32 @@ final class ArticleController extends AbstractController
      *
      * See https://symfony.com/doc/current/routing.html#special-parameters
      */
-    public function homepage(ArticleRepository $articles, TagRepository $tags): Response
+    public function homepage(ArticleRepository $articles, TagRepository $tags, \Symfony\Contracts\Cache\CacheInterface $cache): Response
     {
-        $topStory = $articles->findOneBy(['isTopStory' => true], ['publishedAt' => 'DESC', 'priority' => 'DESC']);
-        if (!$topStory) {
-            $topStory = $articles->findOneBy([], ['publishedAt' => 'DESC', 'priority' => 'DESC']);
+        // 1. Try to find an explicit "Top Story"
+        $topStory = $articles->findOneTopStory();
+
+        // 2. Fetch latest articles (raw array, no count query)
+        // Fetch slightly more than needed to cover the case where we skip the top story
+        $latestArticlesRaw = $articles->findLatestRaw(15);
+        $latestArticles = [];
+
+        // Use the raw array directly
+        $results = $latestArticlesRaw;
+
+        // If no explicit top story exists, promote the very first latest article to top story
+        if (!$topStory && count($results) > 0) {
+            $topStory = $results[0];
         }
 
-        $latestPaginator = $articles->findLatest(1);
-        $latestArticles = [];
-        foreach ($latestPaginator->getResults() as $article) {
+        foreach ($results as $article) {
+            // Don't show the top story in the "Latest" list
             if ($topStory && $article->getId() === $topStory->getId()) {
                 continue;
             }
+
             $latestArticles[] = $article;
+
             if (count($latestArticles) >= 10) {
                 break;
             }
@@ -68,11 +80,15 @@ final class ArticleController extends AbstractController
         // Simulating "Trending" - for now just take the first 3 of the latest
         $trending = array_slice($latestArticles, 0, 3);
 
+        $tagsCloud = $cache->get('homepage_tags_cloud', function () use ($tags) {
+            return $tags->findAll();
+        });
+
         return $this->render('default/homepage.html.twig', [
             'topStory' => $topStory,
             'latest' => $latestArticles,
             'trending' => $trending,
-            'tags' => $tags->findAll(),
+            'tags' => $tagsCloud,
         ]);
     }
 
@@ -125,18 +141,20 @@ final class ArticleController extends AbstractController
     }
 
     /**
-     * NOTE: when the controller argument is a Doctrine entity, Symfony makes an
-     * automatic database query to fetch it based on the value of the route parameters.
-     * The '{slug:article}' configuration tells Symfony to use the 'slug' route
-     * parameter in the database query that fetches the entity of the $article argument.
-     * This is mostly useful when the route has multiple parameters and the controller
-     * also has multiple arguments.
-     * See https://symfony.com/doc/current/doctrine.html#automatically-fetching-objects-entityvalueresolver.
+     * NOTE: We manually fetch the article to ensure we eager-load all relationships
+     * (Author, Tags, Images, Videos) in a single query, avoiding N+1 issues.
      */
-    #[Route('/{slug:article}', name: 'article_show', requirements: ['slug' => Requirement::ASCII_SLUG], methods: ['GET'])]
-    public function articleShow(Article $article): Response
+    #[Route('/{slug}', name: 'article_show', requirements: ['slug' => Requirement::ASCII_SLUG], methods: ['GET'])]
+    public function articleShow(Request $request, string $slug, ArticleRepository $articles): Response
     {
-        return $this->render('article/show.html.twig', ['article' => $article]);
+        // Use eager-loading method to avoid N+1 queries
+        $post = $articles->findOneBySlug($slug);
+
+        if (!$post) {
+            throw $this->createNotFoundException('Article not found');
+        }
+
+        return $this->render('article/show.html.twig', ['article' => $post]);
     }
 
     /**

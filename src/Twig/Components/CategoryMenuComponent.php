@@ -10,7 +10,8 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 final class CategoryMenuComponent
 {
     public function __construct(
-        private CategoryRepository $categoryRepository
+        private CategoryRepository $categoryRepository,
+        private \Symfony\Contracts\Cache\CacheInterface $cache
     ) {
     }
 
@@ -19,6 +20,8 @@ final class CategoryMenuComponent
      */
     public function getCategories(): array
     {
-        return $this->categoryRepository->findAllOrderedByName();
+        return $this->cache->get('category_menu_items', function () {
+            return $this->categoryRepository->findAllOrderedByName();
+        });
     }
 }

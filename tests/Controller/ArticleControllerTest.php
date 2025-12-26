@@ -78,7 +78,7 @@ final class ArticleControllerTest extends WebTestCase
 
         // Find first article
         $crawler = $client->request('GET', '/en/article/');
-        $postLink = $crawler->filter('article.post > h2 a')->link();
+        $postLink = $crawler->filter('article.post h2 a')->link();
 
         $client->click($postLink);
         $crawler = $client->submitForm('Publish comment', [
